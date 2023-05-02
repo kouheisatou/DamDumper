@@ -8,6 +8,8 @@ if (startDump) {
 
 	var hasNext = true
 	var pageNo = 1
+	var dumpResult = []
+
 	while (hasNext) {
 		let url = "https://www.clubdam.com/app/damtomo/scoring/GetScoringAiListXML.do?cdmCardNo=" + cdmCardNo + "&cdmToken=" + cdmToken + "&enc=sjis&pageNo=" + pageNo + "&detailFlg=1&UTCserial=" + Date.now()
 		console.log(url)
