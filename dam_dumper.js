@@ -76,4 +76,6 @@ if (startDump) {
 	console.log("cdmToken : " + cdmToken)
 	console.log("cdmCardNo : " + cdmCardNo)
 	startDownload(cdmToken, cdmCardNo)
+}else{
+	location.reload()
 }
