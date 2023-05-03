@@ -50,7 +50,7 @@ async function fetchScorings(cdmToken, cdmCardNo, scoreingType) {
 
 async function downloadScores(cdmToken, cdmCardNo, scoreingType) {
 	let resultXml = await fetchScorings(cdmToken, cdmCardNo, scoreingType)
-	let filename = scoreingType + "_" + Date.now() + ".xml"
+	let filename = scoreingType + "_" + dateToFormatString(new Date(), "%YYYY%-%MM%-%DD%") + ".xml"
 	console.log(filename)
 
 	// テキストファイルをバイナリデータに変換
