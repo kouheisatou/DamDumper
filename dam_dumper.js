@@ -65,6 +65,8 @@ async function downloadScores(cdmToken, cdmCardNo, scoreingType) {
 async function startDownload(cdmToken, cdmCardNo) {
 	await downloadScores(cdmToken, cdmCardNo, "GetScoringAiListXML")
 	await downloadScores(cdmToken, cdmCardNo, "GetScoringDxgListXML")
+	window.alert("すべての採点結果の保存が完了しました")
+	location.reload()
 }
 
 let startDump = window.confirm("採点履歴を保存しますか？")
