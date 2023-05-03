@@ -5,6 +5,7 @@ async function fetchScorings(cdmToken, cdmCardNo, scoreingType) {
 	let hasNext = true;
 	let dumpResult = [];
 	var pageNo = 1
+	var itemCount = 0
 
 	while (hasNext) {
 		await new Promise(resolve => setTimeout(resolve, 1000));
@@ -29,22 +30,41 @@ async function fetchScorings(cdmToken, cdmCardNo, scoreingType) {
 			let scoreings = xmlData.getElementsByTagName("scoring");
 			for (var i = 0; i < scoreings.length; i++) {
 				dumpResult.push(serializer.serializeToString(scoreings[i]));
+				itemCount++
 			}
 
 		} catch (error) {
 			console.error(error);
+			hasNext = false
 		}
 		pageNo++
 	}
 
+	var resultString = '<document xmlns="https://www.clubdam.com/app/damtomo/scoring/' + scoreingType + '" type="2.2"><list count="' + itemCount + '">'
 	for (var i = 0; i < dumpResult.length; i++) {
-		console.log(dumpResult[i]);
+		resultString += dumpResult[i]
 	}
+	resultString += '</list></document>'
+	return resultString
 }
 
-async function startFetch(cdmToken, cdmCardNo){
-	await fetchScorings(cdmToken, cdmCardNo, "GetScoringAiListXML")
-	await fetchScorings(cdmToken, cdmCardNo, "GetScoringDxgListXML")
+async function downloadScores(cdmToken, cdmCardNo, scoreingType) {
+	let resultXml = await fetchScorings(cdmToken, cdmCardNo, scoreingType)
+	let filename = scoreingType + "_" + Date.now() + ".xml"
+	console.log(filename)
+
+	// テキストファイルをバイナリデータに変換
+	const blob = new Blob([resultXml], { type: 'text/xml' });
+
+	let link = document.createElement('a')
+	link.href = URL.createObjectURL(blob)
+	link.download = filename
+	link.click()
+}
+
+async function startDownload(cdmToken, cdmCardNo) {
+	await downloadScores(cdmToken, cdmCardNo, "GetScoringAiListXML")
+	await downloadScores(cdmToken, cdmCardNo, "GetScoringDxgListXML")
 }
 
 let startDump = window.confirm("採点履歴を保存しますか？")
@@ -53,6 +73,5 @@ if (startDump) {
 	let cdmCardNo = DamHistoryManager.getCdmCardNo()
 	console.log("cdmToken : " + cdmToken)
 	console.log("cdmCardNo : " + cdmCardNo)
-
-	startFetch(cdmToken, cdmCardNo)
+	startDownload(cdmToken, cdmCardNo)
 }
